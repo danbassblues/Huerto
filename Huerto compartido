@@ -1,0 +1,78 @@
+CREATE DATABASE IF NOT EXISTS huerto;
+USE huerto;
+
+CREATE TABLE IF NOT EXISTS plantas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    cantidad INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS recursos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    planta_id INT NOT NULL,
+    tipo_recurso VARCHAR(50) NOT NULL, 
+    cantidad DECIMAL(10, 2) NOT NULL, 
+    unidad VARCHAR(20) NOT NULL, 
+    FOREIGN KEY (planta_id) REFERENCES plantas(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS costos_detallados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    planta_id INT NOT NULL,
+    proceso VARCHAR(50) NOT NULL, 
+    costo DECIMAL(10, 2) NOT NULL, 
+    fecha DATE NOT NULL,
+    FOREIGN KEY (planta_id) REFERENCES plantas(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS clima (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    planta_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    temperatura DECIMAL(5, 2), 
+    humedad DECIMAL(5, 2), 
+    precipitacion DECIMAL(5, 2), 
+    FOREIGN KEY (planta_id) REFERENCES plantas(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS planificacion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    planta_id INT NOT NULL,
+    fecha_siembra DATE NOT NULL,
+    fecha_estimada_cosecha DATE NOT NULL,
+    FOREIGN KEY (planta_id) REFERENCES plantas(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS cosechas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    planta_id INT NOT NULL,
+    fecha_cosecha DATE NOT NULL,
+    cantidad_cosechada DECIMAL(10, 2) NOT NULL, 
+    unidad VARCHAR(20) NOT NULL, 
+    FOREIGN KEY (planta_id) REFERENCES plantas(id) ON DELETE CASCADE
+);
+
+
+INSERT INTO plantas (nombre, tipo, cantidad) VALUES
+('Ajo', 'Vegetal', 100),
+('Trigo', 'Cereal', 200),
+('Zanahoria', 'Vegetal', 150);
+
+INSERT INTO recursos (planta_id, tipo_recurso, cantidad, unidad) VALUES
+(1, 'Agua', 10, 'Litros'),
+(1, 'Fertilizante', 2, 'Kg'),
+(2, 'Agua', 20, 'Litros'),
+(2, 'Fertilizante', 5, 'Kg'),
+(3, 'Agua', 15, 'Litros'),
+(3, 'Fertilizante', 3, 'Kg');
+
+INSERT INTO cosechas (planta_id, fecha_cosecha, cantidad_cosechada, unidad) VALUES
+(1, '2024-11-01', 5, 'Kg'),
+(3, '2024-11-02', 3, 'Kg');
+
+INSERT INTO costos_detallados (planta_id, proceso, costo, fecha) VALUES
+(1, 'Riego', 50, '2024-10-20'),
+(1, 'Fertilización', 30, '2024-10-21'),
+(2, 'Riego', 70, '2024-10-20'),
+(3, 'Riego', 60, '2024-10-22');
